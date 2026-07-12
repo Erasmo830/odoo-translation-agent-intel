@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Translation Jobs -->
+        <record id="seq_translation_job" model="ir.sequence">
+            <field name="name">Secuencia de Trabajos de Traducción</field>
+            <field name="code">translation.job</field>
+            <field name="prefix">TR-%(range_year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

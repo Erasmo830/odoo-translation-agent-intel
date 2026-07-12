@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_translation_job_tree" model="ir.ui.view">
+        <field name="name">translation.job.tree</field>
+        <field name="model">translation.job</field>
+        <field name="arch" type="xml">
+            <tree string="Trabajos de Traducción">
+                <field name="name"/>
+                <field name="pdf_filename"/>
+                <field name="docx_filename"/>
+                <field name="state" widget="badge" decoration-info="state == 'processing'" 
+                       decoration-warning="state == 'alert'" decoration-success="state == 'done'" 
+                       decoration-danger="state == 'error'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_translation_job_form" model="ir.ui.view">
+        <field name="name">translation.job.form</field>
+        <field name="model">translation.job</field>
+        <field name="arch" type="xml">
+            <form string="Traducción Inteligente">
+                <header>
+                    <button name="action_start_translation" string="Iniciar Traducción Multi-Agente" 
+                            type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ['draft', 'error'])]}"/>
+                    
+                    <button name="%(action_view_translation_alert_wizard)d" string="⚠️ Resolver Conflicto Narrativo" 
+                            type="action" class="btn-danger" attrs="{'invisible': [('state', '!=', 'alert')]}"/>
+                    
+                    <field name="state" widget="statusbar" statusbar_visible="draft,processing,alert,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Configuración de Idiomas">
+                            <field name="source_lang"/>
+                            <field name="target_lang"/>
+                            <field name="target_country"/>
+                        </group>
+                        <group string="Gestión de Archivos">
+                            <field name="pdf_file" filename="pdf_filename" string="Archivo a Traducir (PDF)"/>
+                            <field name="pdf_filename" invisible="1"/>
+                            
+                            <field name="docx_file" filename="docx_filename" string="Documento Traducido (DOCX)" attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                            <field name="docx_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Segmentos Traducidos (Audit)">
+                            <field name="line_ids" readonly="1">
+                                <tree string="Segmentos" limit="500">
+                                    <field name="page_number"/>
+                                    <field name="sequence"/>
+                                    <field name="text_original" string="Texto Original"/>
+                                    <field name="text_translated" string="Texto Traducido"/>
+                                    <field name="alignment"/>
+                                    <field name="is_heading" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Detalles de Conflictos" attrs="{'invisible': [('state', '!=', 'alert')]}">
+                            <group>
+                                <field name="conflict_text_original"/>
+                                <field name="conflict_suggested_options"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_translation_job" model="ir.actions.act_window">
+        <field name="name">Trabajos de Traducción</field>
+        <field name="res_model">translation.job</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Cree su primer trabajo de traducción asíncrona.
+            </p>
+            <p>
+                Suba un documento PDF, seleccione la combinación de idiomas deseada, y la orquestación multi-agente realizará la extracción y traducción a Word.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_translation_agent_root" 
+              name="Traductor Inteligente" 
+              web_icon="translation_agent_intel,static/description/icon.png"
+              sequence="20"/>
+
+    <menuitem id="menu_translation_job_cat" 
+              name="Operaciones" 
+              parent="menu_translation_agent_root" 
+              sequence="10"/>
+
+    <menuitem id="menu_translation_job" 
+              name="Trabajos de Traducción" 
+              parent="menu_translation_job_cat" 
+              action="action_translation_job" 
+              sequence="10"/>
+</odoo>
