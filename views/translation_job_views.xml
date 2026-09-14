@@ -47,6 +47,8 @@
                             
                             <field name="docx_file" filename="docx_filename" string="Documento Traducido (DOCX)" attrs="{'invisible': [('state', '!=', 'done')]}"/>
                             <field name="docx_filename" invisible="1"/>
+                            <button name="action_download_docx" string="📥 Descargar Word (.docx)" type="object" class="btn-primary" attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                            <field name="webhook_url" string="URL del Webhook (Callback)"/>
                         </group>
                     </group>
                     
